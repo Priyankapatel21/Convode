@@ -102,4 +102,4 @@ npm run dev
 
 ---
 
-<p align="center">Developed with ❤️ by <strong>Priyanka Patel</strong></p>
+<p align="center">Developed by <strong>Priyanka Patel</strong></p>
