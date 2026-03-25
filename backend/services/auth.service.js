@@ -11,7 +11,7 @@ passport.use(new GoogleStrategy({
     passReqToCallback: true
 
   },
-  async (accessToken, refreshToken, profile, done) => {
+  async (req, accessToken, refreshToken, profile, done) => {
     try {
         // Find the user by email
         let user = await userModel.findOne({ email: profile.emails[0].value });
