@@ -4,6 +4,7 @@ import userModel from '../models/user.model.js';
 import { validationResult } from 'express-validator';
 
 
+
 export const createProject = async (req, res) => {
 
     const errors = validationResult(req);
@@ -130,4 +131,28 @@ export const updateFileTree = async (req, res) => {
         res.status(400).json({ error: err.message })
     }
 
+}
+
+export const deleteProjectController = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const userId = req.user._id;
+
+        // Find project and ensure the logged-in user is part of it
+        const project = await projectModel.findOne({
+            _id: projectId,
+            users: userId
+        });
+
+        if (!project) {
+            return res.status(404).json({ message: "Project not found or unauthorized" });
+        }
+
+        await projectModel.findByIdAndDelete(projectId);
+
+        res.status(200).json({ message: "Project deleted successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
 }

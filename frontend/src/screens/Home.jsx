@@ -1,105 +1,87 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { UserContext } from '../context/user.context'
-import axios from "../config/axios"
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
-
-    const { user } = useContext(UserContext)
-    const [ isModalOpen, setIsModalOpen ] = useState(false)
-    const [ projectName, setProjectName ] = useState(null)
-    const [ project, setProject ] = useState([])
-
-    const navigate = useNavigate()
-
-    function createProject(e) {
-        e.preventDefault()
-        console.log({ projectName })
-
-        axios.post('/projects/create', {
-            name: projectName,
-        })
-            .then((res) => {
-            setIsModalOpen(false)
-            // Navigate straight to the project you just created
-            navigate(`/project`, {
-                state: { project: res.data }
-            })
-        })
-            .catch((error) => {
-                console.log(error)
-            })
-    }
-
-    useEffect(() => {
-        axios.get('/projects/all').then((res) => {
-            setProject(res.data.projects)
-
-        }).catch(err => {
-            console.log(err)
-        })
-
-    }, [])
-
     return (
-        <main className='p-4'>
-            <div className="projects flex flex-wrap gap-3">
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="project p-4 border border-slate-300 rounded-md">
-                    New Project
-                    <i className="ri-link ml-2"></i>
-                </button>
-
-                {
-                    project.map((project) => (
-                        <div key={project._id}
-                            onClick={() => {
-                                navigate(`/project`, {
-                                    state: { project }
-                                })
-                            }}
-                            className="project flex flex-col gap-2 cursor-pointer p-4 border border-slate-300 rounded-md min-w-52 hover:bg-slate-200">
-                            <h2
-                                className='font-semibold'
-                            >{project.name}</h2>
-
-                            <div className="flex gap-2">
-                                <p> <small> <i className="ri-user-line"></i> Collaborators</small> :</p>
-                                {project.users.length}
-                            </div>
-
-                        </div>
-                    ))
-                }
-
-
-            </div>
-
-            {isModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md w-1/3">
-                        <h2 className="text-xl mb-4">Create New Project</h2>
-                        <form onSubmit={createProject}>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700">Project Name</label>
-                                <input
-                                    onChange={(e) => setProjectName(e.target.value)}
-                                    value={projectName}
-                                    type="text" className="mt-1 block w-full p-2 border border-gray-300 rounded-md" required />
-                            </div>
-                            <div className="flex justify-end">
-                                <button type="button" className="mr-2 px-4 py-2 bg-gray-300 rounded-md" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">Create</button>
-                            </div>
-                        </form>
+        /* FIX: Added flex and flex-col to make the children fill the height */
+        <div className="min-h-screen bg-[#10192d] text-white font-sans selection:bg-blue-500/30 overflow-x-hidden flex flex-col">
+            
+            {/* Navbar */}
+            <nav className="fixed top-0 w-full z-50 bg-[#0D1321]/90 backdrop-blur-md px-6 py-4 border-b border-gray-800/20">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-2xl font-extrabold tracking-tight font-['Nunito']">
+                        <span className="text-blue-500 font-mono">{"< >"}</span>
+                        <span>CONVODE</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Link to="/login" className="bg-blue-600 px-6 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">
+                            Sign In
+                        </Link>
+                        <Link to="/register" className="bg-blue-600 px-6 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition">
+                            Get Started
+                        </Link>
                     </div>
                 </div>
-            )}
+            </nav>
 
+            {/* Hero Section - Added flex-grow to push footer to the absolute bottom */}
+            <main className="relative pt-44 pb-20 flex flex-col items-center text-center px-6 flex-grow">
+                
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-blue-500/10 blur-[120px] -z-10"></div>
 
-        </main>
-    )
-}
+                <h1 className="text-5xl md:text-7xl font-bold font-['Nunito'] tracking-tight mb-6 leading-tight">
+                    Code. Collaborate. <span className="text-blue-500">Create.</span>
+                </h1>
+                
+                <p className="max-w-2xl text-lg md:text-xl text-gray-400 mb-10 leading-relaxed font-['Nunito']">
+                    The ultimate online IDE for Web Development with instant <br className="hidden md:block"/> 
+                    AI execution and real-time collaborative workspace.
+                </p>
 
-export default Home
+                <Link to="/register" className="bg-blue-600 text-white px-10 py-4 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 font-['Nunito']">
+                    Start Coding for Free
+                </Link>
+
+                {/* Feature Cards */}
+                <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl w-full font-['Nunito']">
+                    <div className="bg-[#161b2b] p-8 rounded-2xl border border-gray-800/50 text-left hover:border-blue-500/50 transition-all shadow-xl">
+                        <div className="text-yellow-400 text-3xl mb-4">
+                            <i className="ri-flashlight-fill"></i>
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 font-sans">Instant Execution</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed font-sans">
+                            Run your code instantly with support for MERN stack, including backend servers and frontend previews.
+                        </p>
+                    </div>
+
+                    <div className="bg-[#161b2b] p-8 rounded-2xl border border-gray-800/50 text-left hover:border-blue-500/50 transition-all shadow-xl">
+                        <div className="text-green-400 text-3xl mb-4">
+                            <i className="ri-group-fill"></i>
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 font-sans">Real-time Collaboration</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed font-sans">
+                            Share your projects with teammates and collaborate in real-time with integrated chat and live editing.
+                        </p>
+                    </div>
+
+                    <div className="bg-[#161b2b] p-8 rounded-2xl border border-gray-800/50 text-left hover:border-blue-500/50 transition-all shadow-xl">
+                        <div className="text-blue-400 text-3xl mb-4">
+                            <i className="ri-shield-fill"></i>
+                        </div>
+                        <h3 className="text-xl font-bold mb-3 font-sans">Secure & Private</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed font-sans">
+                            Your code is secure with Google OAuth authentication and private project workspaces.
+                        </p>
+                    </div>
+                </div>
+            </main>
+
+            {/* Footer - Removed extra margins and set background color precisely */}
+            <footer className="w-full py-8 border-t border-gray-800/30 text-center text-gray-500 text-sm bg-[#10192d] mt-auto">
+                © {new Date().getFullYear()} Convode.ai • Built for the modern web.
+            </footer>
+        </div>
+    );
+};
+
+export default Home;

@@ -31,7 +31,7 @@ io.use(async (socket, next) => {
             return next(new Error('Authentication error'))
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         if (!decoded) {
             return next(new Error('Authentication error'))

@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-
 const projectSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -19,12 +18,10 @@ const projectSchema = new mongoose.Schema({
     fileTree: {
         type: Object,
         default: {}
-    },
-
-})
+    }
+}, { timestamps: true }); 
 
 
 const Project = mongoose.model('project', projectSchema)
-
 
 export default Project;

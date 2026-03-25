@@ -4,7 +4,7 @@ let socketInstance = null;
 
 export const initializeSocket = (projectId) => {
     const token = localStorage.getItem('token');
-    const apiUrl = import.meta.env.VITE_API_URL || 'https://convode.onrender.com'
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://convode.onrender.com';
 
     // Prevent duplicate connections
     if (socketInstance?.connected) return socketInstance;
