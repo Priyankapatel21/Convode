@@ -10,34 +10,51 @@ const UserAuth = ({ children }) => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        // If we already have a user in context, we're good
-        if (user) {
-            setLoading(false)
-            return
-        }
+    // 1. Check if tokens are in the URL (Google Redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    const refreshTokenFromUrl = urlParams.get('refreshToken');
 
-        // If there is no token at all, they must login
-        if (!token) {
+    if (tokenFromUrl) {
+        // Save to localStorage immediately
+        localStorage.setItem('token', tokenFromUrl);
+        if (refreshTokenFromUrl) {
+            localStorage.setItem('refreshToken', refreshTokenFromUrl);
+        }
+        
+        // Clean the URL so the token doesn't stay visible in the address bar
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // 2. Now get the token (either existing or just saved)
+    const currentToken = localStorage.getItem('token');
+
+    if (user) {
+        setLoading(false);
+        return;
+    }
+
+    if (!currentToken) {
+        setLoading(false);
+        // Optional: navigate('/login') if you want to force login
+        return;
+    }
+
+    // 3. Fetch the profile to get the actual name (username)
+    axios.get('/users/profile')
+        .then(res => {
+            setUser(res.data.user); // This updates the Context with your name!
             setLoading(false);
-            return
-        }
+        })
+        .catch((err) => {
+            console.error("Auth verification failed:", err);
+            localStorage.removeItem('token');
+            localStorage.removeItem('refreshToken');
+            setLoading(false);
+            navigate('/login');
+        });
 
-        // If there is a token but no user state (e.g., after a page refresh),
-        // try to fetch the profile using the token.
-        // Our new Axios interceptor will handle refreshing if the token is expired!
-        axios.get('/users/profile')
-            .then(res => {
-                setUser(res.data.user)
-                setLoading(false)
-            })
-            .catch((err) => {
-                console.error("Auth verification failed:", err)
-                localStorage.removeItem('token')
-                localStorage.removeItem('refreshToken')
-                navigate('/login')
-            })
-
-    }, [user, token, navigate, setUser])
+}, [ user, navigate, setUser ]); // Added dependencies
 
     if (loading) {
         return (
