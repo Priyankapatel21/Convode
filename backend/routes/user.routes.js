@@ -51,12 +51,25 @@ router.get('/google/callback',
 
             // Redirect to frontend with tokens in URL
             // Adjust the URL to your frontend's "Login Success" handler
-            const frontendUrl = 'https://convode.vercel.app/login';
-            res.redirect(`${frontendUrl}?token=${accessToken}&refreshToken=${refreshToken}`);
+            const frontendUrl = process.env.NODE_ENV === 'production' 
+                ? 'https://convode.vercel.app' 
+                : 'http://localhost:5173';
+
+            res.cookie('token', accessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+                maxAge: 3600000 // 1 hour
+            });
+
+            res.redirect(`${frontendUrl}/dashboard?token=${accessToken}&refreshToken=${refreshToken}`);
             
         } catch (error) {
             console.error("OAuth Callback Error:", error);
-            res.redirect('https://convode.vercel.app/login?error=auth_failed');
+            const errorUrl = process.env.NODE_ENV === 'production' 
+                ? 'https://convode.vercel.app/login?error=auth_failed' 
+                : 'http://localhost:5173/login?error=auth_failed';
+            res.redirect(errorUrl);
         }
     }
 );
