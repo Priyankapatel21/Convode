@@ -8,10 +8,10 @@ passport.use(new GoogleStrategy({
     callbackURL: process.env.NODE_ENV === 'production' 
         ? "https://convode.onrender.com/users/google/callback" 
         : "http://localhost:3000/users/google/callback",
-        
     passReqToCallback: true
+
   },
-  async (req, accessToken, refreshToken, profile, done) => {
+  async (accessToken, refreshToken, profile, done) => {
     try {
         // Find the user by email
         let user = await userModel.findOne({ email: profile.emails[0].value });

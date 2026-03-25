@@ -51,13 +51,12 @@ router.get('/google/callback',
 
             // Redirect to frontend with tokens in URL
             // Adjust the URL to your frontend's "Login Success" handler
-            // const frontendUrl = 'https://convode.vercel.app/login';
-            const frontendUrl = 'http://localhost:5173/login';
+            const frontendUrl = 'https://convode.vercel.app/login';
             res.redirect(`${frontendUrl}?token=${accessToken}&refreshToken=${refreshToken}`);
             
         } catch (error) {
             console.error("OAuth Callback Error:", error);
-            res.redirect('http://localhost:5173/login?error=auth_failed');
+            res.redirect('https://convode.vercel.app/login?error=auth_failed');
         }
     }
 );
